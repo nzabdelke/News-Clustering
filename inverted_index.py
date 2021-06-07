@@ -43,3 +43,23 @@ class InvertedIndex:
         else:
 
             return 0
+
+    def make_document_vector(self, document_ID):
+
+        document_vector = []
+
+        for index_term in self.index_terms:
+
+            document_vector.append(self.calculate_tfidf(index_term, document_ID))
+
+        return document_vector
+
+    def make_document_by_term_matrix(self):
+
+        document_term_matrix = []
+
+        for document_ID in self.corpus:
+
+            document_term_matrix.append(self.make_document_vector(document_ID))
+
+        return document_term_matrix

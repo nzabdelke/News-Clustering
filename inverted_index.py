@@ -1,3 +1,4 @@
+import math
 from collections import Counter
 
 
@@ -24,5 +25,21 @@ class InvertedIndex:
         return self.index_terms[index_term].get(document_ID, 0)
 
     def calculate_document_frequency(self, index_term):
-        
+
         return len(self.index_terms[index_term])
+
+    def calculate_tf_idf(self, index_term, document_ID):
+
+        tfRaw = self.calculate_term_frequency(index_term, document_ID)
+
+        if not tfRaw == 0:
+            tf = 1 + math.log10(tfRaw)
+            n = len(self.corpus)
+            df = self.calculate_document_frequency(index_term)
+            idf = math.log10(n / df)
+
+            return tf * idf
+
+        else:
+
+            return 0

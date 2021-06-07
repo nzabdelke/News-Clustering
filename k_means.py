@@ -85,3 +85,44 @@ class KMeans:
             RSS_list.append(sum(cluster_RSS))
 
         return (RSS_list, top_documents)
+
+    def assign_documents_to_cluster(self, data):
+
+        # data is the TF-IDF matrix (documents x index terms)
+        self.data = data
+
+        # number of documents is the number of rows in the TF-IDF matrix
+        self.number_of_documents = data.shape[0]
+
+        # number of index terms is the number of columns in the TF-IDF matrix
+        self.number_of_index_terms = data.shape[1]
+
+        # retrieve the document indices that will serve as the seed centroids randomly
+        seed_document_indices = np.random.choice(
+            self.number_of_documents, self.k, replace=False
+        )  # replace = False to sample without replacement
+
+        # assign the centroids to the actual row from the TF-IDF matrix that corresponds to the
+        # randomly selected document indices
+        self.centroids = [self.data[i] for i in seed_document_indices]
+
+        # update clusters and centroids
+        for i in range(self.iterations):
+
+            # update clusters
+            self.clusters = self.make_clusters(self.centroids)
+
+            prev_centroids = self.centroids
+
+            # for each cluster, assign the mean value of the cluster to the corresponding
+            # centroid
+            self.centroids = self.calculate_centroids(self.clusters)
+
+            # check for convergence and exit if this occurs before the number of iterations is reached
+            if self.is_converged(prev_centroids, self.centroids):
+                break
+
+        RSS, top_documents = self.calculate_RSS(self.clusters, self.centroids)
+
+        # return the cluster label for every document and other variables used for evaluation / cluster understanding
+        return (self.cluster_labels(self.clusters), self.clusters, RSS, top_documents)

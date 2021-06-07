@@ -2,6 +2,8 @@ import numpy as np
 from numpy import dot
 from numpy.linalg import norm
 
+np.random.seed(123)
+
 
 def cosine_distance(vector1, vector2):
 
@@ -22,6 +24,21 @@ class KMeans:
 
         # initialize each cluster as an empty list
         self.clusters = [[] for i in range(self.k)]
+
+    def cluster_labels(self, clusters):
+
+        # initialize the labels as an empty 1D array with a length corresponding
+        # to the number of documents in the TF-IDF matrix
+        labels = np.empty(self.number_of_documents)
+
+        for cluster_index, cluster in enumerate(clusters):
+
+            for document_index in cluster:
+
+                # the label of a document is assigned the index of its cluster
+                labels[document_index] = cluster_index
+
+        return labels
 
     def find_nearest_centroid(self, row, centroids):
 

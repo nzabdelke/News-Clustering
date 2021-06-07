@@ -22,3 +22,7 @@ class InvertedIndex:
     def calculate_term_frequency(self, index_term, document_ID):
 
         return self.index_terms[index_term].get(document_ID, 0)
+
+    def calculate_document_frequency(self, index_term):
+        
+        return len(self.index_terms[index_term])

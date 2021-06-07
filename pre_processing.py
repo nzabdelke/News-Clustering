@@ -30,3 +30,25 @@ def parse_corpus():
             titles.append(curr_file.readline().strip())
 
     return (documents, titles, y_true)
+
+
+def pre_process_corpus(documents):
+
+    stemmer = Stemmer.Stemmer("english")
+    stopwords_set = set(stopwords.words("english"))
+    my_tokenizer = CountVectorizer().build_tokenizer()
+    pre_processed_corpus = []
+
+    for document in documents:
+
+        pre_processed_corpus.append(
+            " ".join(
+                [
+                    stemmer.stemWord(i.lower())
+                    for i in my_tokenizer(document)
+                    if i.lower() not in stopwords_set
+                ]
+            )
+        )
+
+    return pre_processed_corpus

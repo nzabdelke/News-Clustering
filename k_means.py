@@ -22,3 +22,14 @@ class KMeans:
 
         # initialize each cluster as an empty list
         self.clusters = [[] for i in range(self.k)]
+    
+    def find_nearest_centroid(self, row, centroids):
+
+        # compute cosine distances between a document and the centroids
+        cosine_distances = [cosine_distance(row, centroid) for centroid in centroids]
+
+        # retrieve the centroid index with the minimum distance with respect
+        # to a row from the TF-IDF matrix
+        nearest_centroid_index = np.argmin(cosine_distances)
+
+        return nearest_centroid_index

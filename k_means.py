@@ -49,3 +49,39 @@ class KMeans:
             clusters[centroid_index].append(document_index)
 
         return clusters
+
+    def calculate_RSS(self, clusters, centroids):
+
+        # store RSS of each cluster
+        RSS_list = []
+
+        top_documents = [[] for y in range(self.k)]
+
+        squared_distance = 0
+
+        for cluster_index, document_indices in enumerate(clusters):
+
+            cluster_RSS = []
+
+            for document_index in document_indices:
+
+                # compute the distance squared of a document with respect to its centroid
+                squared_distance = (
+                    cosine_distance(self.data[document_index], centroids[cluster_index])
+                    ** 2
+                )
+
+                cluster_RSS.append(squared_distance)
+
+                # store the documents that have a distance less than
+                # 0.8 with respect to the document's cluster centroid
+                distance = np.sqrt(squared_distance)
+
+                if distance < 0.8:
+                    top_documents[cluster_index].append((document_index, distance))
+
+            # RSS of a cluster is the sum of squared distances between document
+            # vectors and their respective centroid
+            RSS_list.append(sum(cluster_RSS))
+
+        return (RSS_list, top_documents)

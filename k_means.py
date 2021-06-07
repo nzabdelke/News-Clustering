@@ -22,7 +22,7 @@ class KMeans:
 
         # initialize each cluster as an empty list
         self.clusters = [[] for i in range(self.k)]
-    
+
     def find_nearest_centroid(self, row, centroids):
 
         # compute cosine distances between a document and the centroids
@@ -33,3 +33,19 @@ class KMeans:
         nearest_centroid_index = np.argmin(cosine_distances)
 
         return nearest_centroid_index
+
+    def make_clusters(self, centroids):
+
+        # initialize the clusters to a list of lists of length k
+        clusters = [[] for i in range(self.k)]
+
+        for document_index, row in enumerate(self.data):
+
+            # find the index of the centroid such that the cosine distance between
+            # a row and a centroid is minimized
+            centroid_index = self.find_nearest_centroid(row, centroids)
+
+            # append the document index to the cluster that corresponds to the centroid index
+            clusters[centroid_index].append(document_index)
+
+        return clusters

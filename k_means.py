@@ -103,6 +103,19 @@ class KMeans:
 
         return centroids
 
+    def is_converged(self, prev_centroids, centroids):
+
+        # for each cluster, calculate the cosine distance between the
+        # current centroid and the previous centroid
+        cosine_distances = [
+            cosine_distance(prev_centroids[i], centroids[i]) for i in range(self.k)
+        ]
+
+        converged = sum(cosine_distances) == 0
+        # convergance occurs when there is no change in the cosine_distance between
+        # the previous centroid and the current centroid
+        return converged
+
     def assign_documents_to_cluster(self, instance_feature_matrix):
 
         self.instance_feature_matrix = instance_feature_matrix

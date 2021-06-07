@@ -39,7 +39,7 @@ class KMeans:
         # initialize the clusters to a list of lists of length k
         clusters = [[] for i in range(self.k)]
 
-        for document_index, row in enumerate(self.data):
+        for document_index, row in enumerate(self.instance_feature_matrix):
 
             # find the index of the centroid such that the cosine distance between
             # a row and a centroid is minimized
@@ -67,7 +67,10 @@ class KMeans:
 
                 # compute the distance squared of a document with respect to its centroid
                 squared_distance = (
-                    cosine_distance(self.data[document_index], centroids[cluster_index])
+                    cosine_distance(
+                        self.instance_feature_matrix[document_index],
+                        centroids[cluster_index],
+                    )
                     ** 2
                 )
 
@@ -86,16 +89,29 @@ class KMeans:
 
         return (RSS_list, top_documents)
 
-    def assign_documents_to_cluster(self, data):
+    def calculate_centroids(self, clusters):
 
-        # data is the TF-IDF matrix (documents x index terms)
-        self.data = data
+        # initialize centroids as nD array of size k * number of index terms
+        centroids = np.zeros((self.k, self.number_of_index_terms))
+
+        for cluster_index, document_indices in enumerate(clusters):
+
+            # assign the cluster mean to the corresponding centroid
+            centroids[cluster_index] = np.mean(
+                self.instance_feature_matrix[document_indices], axis=0
+            )
+
+        return centroids
+
+    def assign_documents_to_cluster(self, instance_feature_matrix):
+
+        self.instance_feature_matrix = instance_feature_matrix
 
         # number of documents is the number of rows in the TF-IDF matrix
-        self.number_of_documents = data.shape[0]
+        self.number_of_documents = instance_feature_matrix.shape[0]
 
         # number of index terms is the number of columns in the TF-IDF matrix
-        self.number_of_index_terms = data.shape[1]
+        self.number_of_index_terms = instance_feature_matrix.shape[1]
 
         # retrieve the document indices that will serve as the seed centroids randomly
         seed_document_indices = np.random.choice(
@@ -104,7 +120,9 @@ class KMeans:
 
         # assign the centroids to the actual row from the TF-IDF matrix that corresponds to the
         # randomly selected document indices
-        self.centroids = [self.data[i] for i in seed_document_indices]
+        self.centroids = [
+            self.instance_feature_matrix[i] for i in seed_document_indices
+        ]
 
         # update clusters and centroids
         for i in range(self.iterations):

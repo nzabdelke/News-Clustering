@@ -50,7 +50,7 @@ class InvertedIndex:
 
         for index_term in self.index_terms:
 
-            document_vector.append(self.calculate_tfidf(index_term, document_ID))
+            document_vector.append(self.calculate_tf_idf(index_term, document_ID))
 
         return document_vector
 
